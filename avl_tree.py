@@ -1,3 +1,5 @@
+"""AVL tree implementation with search, delete, min, max and sum."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -27,6 +29,48 @@ class AVLTree:
     def delete(self, value: int) -> None:
         """Delete a value from the AVL tree if it exists."""
         self.root = self._delete(self.root, value)
+
+    def min(self) -> AVLNode | None:
+        """Return a node with the smallest value in the tree."""
+        if not self.root:
+            return self.root
+
+        return self._find_min(self.root)
+
+    def max(self) -> AVLNode | None:
+        """Return a node with the largest value in the tree."""
+        if not self.root:
+            return self.root
+
+        return self._find_max(self.root)
+
+    def sum(self) -> int:
+        """Return the sum of all values in the AVL tree."""
+        return self._sum(self.root)
+
+    def _sum(self, node: AVLNode | None) -> int:
+        """Return the sum of all values in a subtree."""
+        if not node:
+            return 0
+
+        result = node.value
+        result += self._sum(node.left) + self._sum(node.right)
+        return result
+
+    def search(self, value: int) -> bool:
+        """Return True if the value exists in the AVL tree."""
+        current = self.root
+
+        while current is not None:
+            if value == current.value:
+                return True
+
+            if value < current.value:
+                current = current.left
+            else:
+                current = current.right
+
+        return False
 
     def _delete(self, node: AVLNode | None, value: int) -> AVLNode | None:
         """Delete a value and rebalance the subtree."""
@@ -67,15 +111,6 @@ class AVLTree:
 
         return node
 
-    def _find_min(self, node: AVLNode) -> AVLNode:
-        """Find the node with the smallest value in a subtree."""
-        current = node
-
-        while current.left is not None:
-            current = current.left
-
-        return current
-
     def _insert(self, node: AVLNode | None, value: int) -> AVLNode:
         """Insert a value and rebalance the subtree."""
         if not node:
@@ -107,21 +142,6 @@ class AVLTree:
                 return self._rotate_left(node)
 
         return node
-
-    def search(self, value: int) -> bool:
-        """Return True if the value exists in the AVL tree."""
-        current = self.root
-
-        while current is not None:
-            if value == current.value:
-                return True
-
-            if value < current.value:
-                current = current.left
-            else:
-                current = current.right
-
-        return False
 
     def _height(self, node: AVLNode | None) -> int:
         """Return the height of a node."""
@@ -163,3 +183,21 @@ class AVLTree:
         self._update_height(y)
 
         return y
+
+    def _find_min(self, node: AVLNode) -> AVLNode:
+        """Find the node with the smallest value in a subtree."""
+        current = node
+
+        while current.left is not None:
+            current = current.left
+
+        return current
+
+    def _find_max(self, node: AVLNode) -> AVLNode:
+        """Find the node with the largest value in a subtree."""
+        current = node
+
+        while current.right is not None:
+            current = current.right
+
+        return current
